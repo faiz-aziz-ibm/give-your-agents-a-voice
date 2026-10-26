@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Give your agents a voice · IBM watsonx Orchestrate × ElevenLabs</title>
+<meta name="description" content="IBM watsonx Orchestrate thinks, and acts. ElevenLabs gives it a voice your customers will actually want to talk to.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Give your agents a voice · IBM watsonx Orchestrate × ElevenLabs">
+<meta property="og:description" content="AI agents that act, with a voice your customers will actually want to talk to. Watch the film.">
+<meta property="og:image" content="assets/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1a1a1a; --mute:#6f6f6f; --blue:#0f62fe; --blue-d:#0043ce; --line:rgba(0,0,0,.12); --soft:#f4f7ff; --green:#24a148; --red:#da1e28;
+  --pad:clamp(20px,6vw,120px); --ease:cubic-bezier(.22,1,.36,1); --ease2:cubic-bezier(.65,0,.35,1);
+  --font:"Helvetica Neue","IBM Plex Sans",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:#fff;color:var(--ink);font-family:var(--font);font-weight:300;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit} h1,h2,h3,h4,p{margin:0}
+.wrap{width:min(1440px,100% - 2*var(--pad));margin-inline:auto}
+.eyebrow{font-size:13px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}
+.eyebrow.mute{color:var(--mute)}
+.h2{font-size:clamp(34px,4.2vw,68px);font-weight:300;letter-spacing:-.035em;line-height:1.08;margin-top:22px}
+.h2 em{font-style:normal;color:var(--blue)}
+section{position:relative}
+
+/* ── the reveal language ── */
+.rv,.w{opacity:0;transform:translateY(14px);filter:blur(8px);transition:opacity .8s var(--ease),transform .8s var(--ease),filter .8s var(--ease);transition-delay:calc(var(--i,0)*70ms + var(--base,0ms))}
+.rv.in,.in .w{opacity:1;transform:none;filter:none}
+.w{display:inline-block;white-space:pre}
+.draw path{stroke-dasharray:1 1;stroke-dashoffset:1;transition:stroke-dashoffset var(--t,700ms) var(--ease2) calc(var(--d,0ms) + var(--base,0ms))}
+.draw.in path,.in .draw path{stroke-dashoffset:0}
+
+/* ── bar + buttons ── */
+.progress{position:fixed;inset:0 0 auto 0;height:2px;background:var(--blue);transform-origin:left;transform:scaleX(0);z-index:30}
+.bar{position:fixed;inset:0 0 auto 0;z-index:20;background:#fff;transition:box-shadow .3s}
+.bar.lined{box-shadow:0 1px 0 var(--line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:24px}
+.brand{display:flex;align-items:center;gap:16px;text-decoration:none;font-weight:400;font-size:16px;white-space:nowrap}
+.ibm{display:inline-block;width:58px;height:22px;background:var(--ink);-webkit-mask:url(assets/ibm.png) center/contain no-repeat;mask:url(assets/ibm.png) center/contain no-repeat;flex:none}
+.brand .sep{width:1px;height:22px;background:var(--line)}
+.brand .x{color:var(--mute);font-weight:300}
+.bar nav{display:flex;gap:30px;font-size:15px;font-weight:400}
+.bar nav a{text-decoration:none;color:var(--mute);transition:color .2s}
+.bar nav a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:999px;background:var(--blue);color:#fff;text-decoration:none;font-size:18px;font-weight:400;border:0;cursor:pointer;transition:background .25s;white-space:nowrap}
+.btn:hover{background:var(--blue-d)} .btn .arr{transition:transform .3s var(--ease)} .btn:hover .arr{transform:translateX(4px)}
+.btn.sm{padding:11px 20px;font-size:15px}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--ink);background:transparent}
+.btn.xl{padding:24px 44px;font-size:24px}
+
+/* ── hero: call → voice → action ── */
+.hero{min-height:100svh;padding-top:128px;display:flex;flex-direction:column}
+.hero .title{font-size:clamp(50px,9vw,156px);font-weight:300;letter-spacing:-.045em;line-height:.98;margin-top:22px}
+.hero .title .l2{color:var(--blue);display:block}
+.hero .stage{flex:1;display:grid;grid-template-columns:minmax(0,4.1fr) minmax(0,7.9fr);align-items:end;gap:44px;margin-top:30px}
+.hero .meta{align-self:start;display:flex;flex-direction:column;gap:28px;padding-bottom:24px}
+.when{font-size:clamp(19px,1.9vw,30px);line-height:1.3} .when span{display:block;color:var(--mute)}
+.lede{font-size:clamp(16px,1.3vw,20px);line-height:1.55;color:var(--mute);max-width:32ch}
+.ctas{display:flex;gap:14px;flex-wrap:wrap}
+.drawing{display:block;width:100%;height:auto;overflow:visible}
+.drawing path{fill:none;stroke:var(--blue);stroke-linecap:round;stroke-linejoin:round}
+.drawing .f{fill:rgba(15,98,254,0);transition:fill 1.2s ease calc(var(--base,0ms) + 3000ms),stroke-dashoffset var(--t) var(--ease2) calc(var(--d) + var(--base,0ms))}
+.drawing.in .f{fill:rgba(15,98,254,.06)}
+.drawing .white{fill:#fff}
+.hero-art text{font-family:var(--font);font-size:8px;font-weight:500;letter-spacing:.14em}
+.hero-art .t-ink{fill:var(--ink);font-weight:400;letter-spacing:0}
+.hero-art .t-mute{fill:var(--mute)}
+.hero-art .lbl{opacity:0;transition:opacity .7s ease calc(var(--d,0ms) + var(--base,0ms))}
+.hero-art.in .lbl{opacity:1}
+.hero-art .dotfill{fill:var(--blue)}
+.hero-art .core{fill:var(--blue);transform-box:fill-box;transform-origin:center;transform:scale(0);transition:transform .6s var(--ease) calc(var(--d,0ms) + var(--base,0ms))}
+.hero-art.in .core{transform:none}
+.hero-art .ripple{fill:none;stroke:var(--blue);stroke-width:1.2;transform-box:fill-box;transform-origin:center;opacity:0}
+.hero-art.in .ripple{animation:ripple 2s ease-out 3.6s infinite}
+.hero-art .flow{fill:var(--blue);opacity:0;transition:opacity .6s ease 4s}
+.hero-art.in .flow{opacity:1}
+@keyframes ripple{0%{transform:scale(1);opacity:.8}100%{transform:scale(4.2);opacity:0}}
+.ground{height:2px;background:rgba(15,98,254,.55);transform-origin:left;transform:scaleX(0);transition:transform 1.4s var(--ease2) .35s}
+.ground.in{transform:none}
+.hero .foot{display:flex;justify-content:space-between;align-items:center;padding:22px 0 30px;font-size:15px;color:var(--mute);font-weight:400}
+.scrollcue{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.scrollcue i{width:1px;height:26px;background:var(--mute);display:inline-block;transform-origin:top;animation:cue 2.2s var(--ease2) infinite}
+@keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ── film ── */
+.film{padding:120px 0 40px}
+.player{position:relative;border-radius:28px;overflow:hidden;aspect-ratio:16/9;background:#f2f4f8;box-shadow:0 40px 90px rgba(20,30,60,.12),0 8px 24px rgba(20,30,60,.06);margin-top:34px}
+.player video{display:block;width:100%;height:100%;object-fit:cover}
+.play{position:absolute;inset:0;display:flex;align-items:flex-end;padding:clamp(16px,2.4vw,36px);background:transparent;border:0;cursor:pointer;color:#fff;font:inherit}
+.play>span{display:inline-flex;align-items:center;gap:14px;padding:14px 26px 14px 16px;border-radius:999px;background:var(--blue);font-size:clamp(15px,1.2vw,19px);font-weight:400;animation:breathe 2.6s ease-in-out infinite}
+.play b{width:40px;height:40px;border-radius:50%;background:#fff;color:var(--blue);display:grid;place-items:center} .play svg{width:15px;margin-left:3px}
+@keyframes breathe{0%,100%{box-shadow:0 0 0 0 rgba(15,98,254,.35)}50%{box-shadow:0 0 0 22px rgba(15,98,254,0)}}
+.player.playing .play{display:none}
+.film .note{margin-top:18px;font-size:15px;color:var(--mute);font-weight:400}
+
+/* ── the call ── */
+.call{padding:170px 0 150px}
+.call .grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:80px;align-items:start}
+.thread{display:flex;flex-direction:column;gap:26px;margin-top:6px}
+.who{font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-bottom:10px}
+.who.blue{color:var(--blue)}
+.bubble{display:inline-block;max-width:560px;padding:20px 26px;border-radius:24px;font-size:clamp(18px,1.6vw,25px);line-height:1.4}
+.bubble.them{background:#f2f2f2;border-bottom-left-radius:8px}
+.bubble.us{background:var(--blue);color:#fff;border-bottom-left-radius:8px}
+.toast{display:inline-flex;align-items:center;gap:12px;padding:12px 22px 12px 14px;border-radius:999px;background:#fff;box-shadow:0 20px 50px rgba(20,30,60,.10),inset 0 0 0 1px var(--line);font-size:17px;font-weight:400}
+.toast span{color:var(--mute);font-weight:300}
+.tick{width:26px;height:26px;border-radius:50%;background:var(--green);display:grid;place-items:center;flex:none}
+.tick svg{width:14px}
+.nohold{font-size:clamp(52px,8.4vw,150px);letter-spacing:-.05em;line-height:1;margin-top:10px}
+.strike{position:relative;display:inline-block}
+.strike::after{content:"";position:absolute;left:-.04em;right:-.04em;top:56%;height:.07em;background:var(--blue);transform-origin:left;transform:scaleX(var(--p,0))}
+
+/* ── why voice ── */
+.why{padding:30px 0 150px}
+.why .grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:80px;align-items:end}
+.why p.body{font-size:clamp(17px,1.3vw,21px);line-height:1.6;color:var(--mute)}
+.trust{margin-top:100px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.trust div{padding:38px 0 34px;display:flex;flex-direction:column;gap:14px}
+.trust div+div{padding-left:40px;border-left:1px solid var(--line)}
+.trust .n{font-size:14px;font-weight:500;letter-spacing:.16em;color:var(--blue)}
+.trust h3{font-size:clamp(36px,4.6vw,80px);font-weight:300;letter-spacing:-.045em;line-height:1}
+.trust div:last-child h3{color:var(--blue)}
+.trust-note{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:18px;font-size:15px;color:var(--mute);font-weight:400}
+.trust-note img{height:22px;vertical-align:middle;margin-right:10px}
+
+/* ── pictograms ── */
+.picto{width:clamp(88px,8vw,120px);height:auto;display:block;overflow:visible}
+.picto path,.picto circle.s{fill:none;stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.picto .k{stroke:var(--ink)} .picto .thick{stroke-width:2.9} .picto .white{fill:#fff}
+.picto .ring{opacity:1}
+.in .picto .ring{animation:ringing 1.6s ease-in-out 1.6s infinite}
+@keyframes ringing{0%,100%{opacity:1}50%{opacity:.25}}
+.picto .hot{fill:rgba(15,98,254,0);transition:fill .5s ease 1.1s}
+.in .picto .hot{fill:var(--blue)}
+.picto .wheel{transform-origin:50px 50px}
+.in .picto .wheel{animation:spin 16s linear 1.4s infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.picto .hub{fill:var(--blue);transform-box:fill-box;transform-origin:center;transform:scale(0);transition:transform .5s var(--ease) .8s}
+.in .picto .hub{transform:none}
+
+/* ── what it does ── */
+.does{padding:140px 0}
+.verbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-top:80px}
+.verb{padding:40px 38px 38px;border-radius:28px;background:var(--soft);display:flex;flex-direction:column;gap:26px;min-height:340px;transition:background .35s}
+.verb:hover{background:#ebf1ff}
+.verb h3{font-size:clamp(34px,3.2vw,52px);font-weight:300;letter-spacing:-.035em;line-height:1}
+.verb p{font-size:clamp(16px,1.2vw,19px);line-height:1.45;color:var(--mute);margin-top:auto}
+.verb .ind{font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}
+
+/* ── languages ── */
+.langs{padding:150px 0 140px;background:var(--soft)}
+.mapwrap{position:relative;margin-top:70px}
+.world{display:block;width:100%;height:auto;overflow:hidden}
+.world path{fill:rgba(15,98,254,0);stroke:var(--ink);stroke-opacity:.32;stroke-width:1;stroke-linejoin:round;transition:stroke-dashoffset var(--t) var(--ease2) var(--d),fill 1s ease 1.6s}
+.world.in path{fill:rgba(15,98,254,.07)}
+.world .dot{fill:var(--blue);opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0);transition:opacity .3s ease var(--pd),transform .5s cubic-bezier(.3,1.6,.6,1) var(--pd)}
+.world.in .dot{opacity:1;transform:none}
+.world .rip{fill:none;stroke:var(--blue);stroke-width:1.6;transform-box:fill-box;transform-origin:center;opacity:0}
+.world.in .rip{animation:ripple 2.4s ease-out infinite;animation-delay:calc(var(--pd) + .4s)}
+.hello{position:absolute;transform:translate(-50%,calc(-100% - 22px));background:#fff;border-radius:16px;padding:12px 18px 11px;box-shadow:0 18px 44px rgba(20,30,60,.12);text-align:center;white-space:nowrap;opacity:0;transition:opacity .5s ease var(--pd),transform .7s var(--ease) var(--pd)}
+.hello::after{content:"";position:absolute;left:50%;bottom:-7px;width:14px;height:14px;background:#fff;transform:translateX(-50%) rotate(45deg);border-radius:2px}
+.hello b{display:block;font-size:clamp(20px,2vw,30px);font-weight:300;letter-spacing:-.02em;line-height:1.1}
+.hello span{display:block;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-top:6px}
+.mapwrap.in .hello{opacity:1;transform:translate(-50%,calc(-100% - 16px))}
+.seventy{display:flex;align-items:baseline;gap:24px;flex-wrap:wrap;margin-top:50px}
+.seventy .big{font-size:clamp(90px,14vw,240px);font-weight:200;letter-spacing:-.06em;line-height:.9;font-variant-numeric:tabular-nums}
+.seventy .big b{color:var(--blue);font-weight:200}
+.seventy p{font-size:clamp(24px,2.6vw,44px);letter-spacing:-.02em}
+.seventy p span{color:var(--mute)}
+
+/* ── proof ── */
+.proof{padding:150px 0}
+.figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:70px}
+.fig{padding:40px 44px;border-radius:28px;background:#fff;box-shadow:0 30px 70px rgba(20,30,60,.08),inset 0 0 0 1px var(--line);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:center}
+.fig .num{font-size:clamp(76px,8vw,132px);font-weight:200;letter-spacing:-.05em;line-height:.95;font-variant-numeric:tabular-nums}
+.fig .num b{color:var(--blue);font-weight:200}
+.fig .what{font-size:clamp(18px,1.6vw,26px);line-height:1.3;margin-top:14px}
+.fig .where{margin-bottom:16px}
+.viz{display:flex;flex-direction:column;gap:12px}
+.viz small{font-size:11px;font-weight:500;letter-spacing:.14em;color:var(--mute)}
+.viz small.b{color:var(--blue)}
+.viz .track{height:18px;border-radius:6px;background:#eef1f6}
+.viz .fill{height:18px;border-radius:6px;background:var(--blue);width:var(--from,100%);transition:width 1.4s var(--ease2) .6s}
+.in .viz .fill{width:var(--to)}
+.dots{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:240px}
+.dots i{aspect-ratio:1;border-radius:50%;background:#c6c6c6;transition:transform .7s var(--ease2),opacity .7s ease;transition-delay:calc(.7s + var(--k,0)*.12s)}
+.in .dots i.go{transform:translateY(30px);opacity:0}
+.blocks{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:240px}
+.blocks i{height:34px;border-radius:7px;background:var(--blue);transition:transform .7s var(--ease2),opacity .7s ease;transition-delay:calc(.7s + var(--k,0)*.12s)}
+.blocks i.go{background:#c6c6c6}
+.in .blocks i.go{transform:translateY(30px);opacity:0}
+.sources{margin-top:26px;font-size:13px;color:var(--mute);font-weight:400}
+
+/* ── watch it work ── */
+.work{padding:150px 0;background:var(--soft)}
+.work .grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:70px;align-items:center;margin-top:70px}
+.panel{background:#fff;border-radius:28px;box-shadow:0 30px 70px rgba(20,30,60,.08);overflow:hidden}
+.panel .head{display:flex;align-items:center;gap:12px;padding:20px 30px;border-bottom:1px solid var(--line);font-size:15px;color:var(--mute);font-weight:400}
+.panel .head img{height:24px}
+.act{display:flex;align-items:center;gap:18px;padding:22px 30px;font-size:clamp(17px,1.5vw,24px);color:#a8a8a8;transition:color .4s ease calc(var(--k)*.95s + .6s)}
+.act+.act{border-top:1px solid var(--line)}
+.in .act{color:var(--ink)}
+.act .st{position:relative;width:30px;height:30px;flex:none}
+.act .ring0,.act .spin,.act .done{position:absolute;inset:0;border-radius:50%}
+.act .ring0{box-shadow:inset 0 0 0 1.5px var(--line);transition:opacity .2s ease calc(var(--k)*.95s + .6s)}
+.act .spin{border:3px solid var(--line);border-top-color:var(--blue);opacity:0;animation:rot .8s linear infinite;transition:opacity .2s ease calc(var(--k)*.95s + .6s)}
+.act .done{background:var(--green);display:grid;place-items:center;transform:scale(0);transition:transform .35s var(--ease) calc(var(--k)*.95s + 1.35s)}
+.act .done svg{width:15px}
+.in .act .ring0{opacity:0}
+.in .act .spin{opacity:1;animation:rot .8s linear infinite,fade 0s linear forwards;animation-delay:0s,calc(var(--k)*.95s + 1.35s)}
+@keyframes fade{to{opacity:0}}
+.in .act .done{transform:none}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ── the sign-off ── */
+.final{padding:170px 0 120px}
+.final .quote{font-size:clamp(46px,7.4vw,132px);font-weight:300;letter-spacing:-.05em;line-height:1.02;color:var(--blue);margin-top:22px;max-width:15ch}
+.final .row{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-top:70px;flex-wrap:wrap}
+.final .row p{font-size:clamp(18px,1.6vw,26px);color:var(--mute);line-height:1.45;max-width:30ch}
+footer{border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:34px 0;font-size:14px;color:var(--mute);font-weight:400;flex-wrap:wrap}
+footer .partners{display:flex;align-items:center;gap:14px}
+footer .partners img{height:14px}
+
+/* ── responsive ── */
+@media (max-width:1100px){ .bar nav{display:none} }
+@media (max-width:1000px){
+  .hero .stage{grid-template-columns:1fr;gap:16px}
+  .call .grid,.why .grid,.work .grid{grid-template-columns:1fr;gap:50px}
+  .verbs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .figs{grid-template-columns:1fr}
+  .trust{grid-template-columns:1fr} .trust div+div{padding-left:0;border-left:0;border-top:1px solid var(--line)}
+}
+@media (max-width:640px){
+  .brand .partner{display:none}
+  .play{align-items:flex-start}
+  .hello{padding:6px 10px 5px;border-radius:12px} .hello b{font-size:15px}
+  .verbs{grid-template-columns:1fr}
+  .verb{min-height:0}
+  .fig{grid-template-columns:1fr;padding:32px 28px}
+  .play>span{padding:10px} .play .lbl{display:none}
+  .hello{padding:8px 12px 7px} .hello span{display:none}
+  .btn.xl{padding:20px 32px;font-size:20px}
+  .trust-note{flex-direction:column;align-items:flex-start}
+}
+@media (max-width:420px){ .bar .brand .sep,.bar .brand .nm{display:none} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .rv,.w{opacity:1;transform:none;filter:none} .draw path{stroke-dashoffset:0} .ground{transform:none}
+  .hero-art .lbl,.hero-art .flow,.world .dot,.hello{opacity:1} .hero-art .core,.picto .hub{transform:none} .strike::after{transform:none}
+}
+</style>
+<noscript><style>.rv,.w,.hello,.hero-art .lbl{opacity:1!important;transform:none!important;filter:none!important}.draw path{stroke-dashoffset:0!important}.ground{transform:none!important}</style></noscript>
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="IBM watsonx Orchestrate and ElevenLabs, back to top"><span class="ibm" aria-hidden="true"></span><span class="sep" aria-hidden="true"></span><span class="nm">watsonx Orchestrate</span><span class="partner"><span class="x">×</span> ElevenLabs</span></a>
+    <nav aria-label="Sections"><a href="#film">The film</a><a href="#does">What it does</a><a href="#languages">Languages</a><a href="#proof">Proof</a><a href="#work">Watch it work</a></nav>
+    <a class="btn sm" href="{{CTA}}">Get in touch <span class="arr" aria-hidden="true">→</span></a>
+  </div>
+</header>
+
+<main>
+<!-- hero: the whole pitch in one drawing — the call, the voice, the action -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <p class="eyebrow rv" style="--base:100ms">IBM watsonx Orchestrate × ElevenLabs</p>
+    <h1 class="title words" style="--base:200ms"><span class="l1">Give your agents</span><span class="l2">a voice.</span></h1>
+  </div>
+  <div class="wrap stage">
+    <div class="meta">
+      <p class="when rv" style="--base:700ms">watsonx Orchestrate<br>thinks, and acts.<span>ElevenLabs gives it a voice.</span></p>
+      <p class="lede rv" style="--base:850ms">AI agents built fast, at scale and with confidence, now with a voice your customers will actually want to talk to.</p>
+      <div class="ctas rv" style="--base:1000ms">
+        <a class="btn" href="{{CTA}}">Get in touch <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn ghost" href="#film">Watch the film</a>
+      </div>
+    </div>
+    <div class="art" style="--base:600ms">
+<!--HERO-->
+    </div>
+  </div>
+  <div class="wrap"><div class="ground"></div></div>
+  <div class="wrap foot rv" style="--base:1400ms"><span>Answered. Resolved. Confirmed.</span><a class="scrollcue" href="#film">Scroll <i aria-hidden="true"></i></a></div>
+</section>
+
+<!-- the film -->
+<section class="film" id="film">
+  <div class="wrap">
+    <p class="eyebrow rv">The film</p>
+    <h2 class="h2 words">Here's one, on <em>a call.</em></h2>
+    <div class="player rv" id="player">
+      <video id="video" src="assets/voice-agents-film.mp4" poster="assets/film-poster.jpg" playsinline preload="metadata"></video>
+      <button class="play" id="play" aria-label="Play the film, 1 minute 54 seconds, with sound"><span><b><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l15 8-15 8z"/></svg></b><span class="lbl">Play the film · 1:54</span></span></button>
+    </div>
+    <p class="note rv">Best with sound on.</p>
+  </div>
+</section>
+
+<!-- the call: forty minutes on hold, answered -->
+<section class="call" aria-label="A caller on hold for forty minutes, answered by an AI agent">
+  <div class="wrap grid">
+    <div>
+      <p class="eyebrow rv">The call</p>
+      <h2 class="h2 words">Every customer has waited. <em>Nobody should have to.</em></h2>
+    </div>
+    <div class="thread">
+      <div class="rv"><p class="who">Caller</p><p class="bubble them words">…forty minutes. I've been on hold for forty minutes.</p></div>
+      <div class="rv" style="--base:300ms"><p class="who blue">AI agent</p><p class="bubble us words">Oh, I'm really sorry, that's not okay. Let's get this sorted, right now.</p></div>
+      <div class="rv" style="--base:700ms"><span class="toast"><span class="tick"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>Resolved <span>· 1m 52s</span></span></div>
+    </div>
+  </div>
+  <div class="wrap"><p class="nohold" style="margin-top:110px">No one was <span class="strike" id="strike">on hold.</span></p></div>
+</section>
+
+<!-- why voice -->
+<section class="why">
+  <div class="wrap grid">
+    <div>
+      <p class="eyebrow rv">Why voice</p>
+      <h2 class="h2 words">The <em>experience</em> matters as much as the outcome.</h2>
+    </div>
+    <p class="body rv">At IBM, we help enterprises build AI agents: fast, at scale, with confidence. Governed, secure and observable with IBM watsonx Orchestrate. Now we've teamed up with ElevenLabs to give your agents a voice your customers will actually want to talk to.</p>
+  </div>
+  <div class="wrap">
+    <div class="trust">
+      <div class="rv"><span class="n">01</span><h3>Governed.</h3></div>
+      <div class="rv" style="--i:1"><span class="n">02</span><h3>Secure.</h3></div>
+      <div class="rv" style="--i:2"><span class="n">03</span><h3>Observable.</h3></div>
+    </div>
+    <p class="trust-note rv"><span><img src="assets/wxo.png" alt="">With IBM watsonx Orchestrate</span><span>Voice by <img src="assets/elevenlabs-black.png" alt="ElevenLabs" style="height:13px;margin:0 0 0 6px"></span></p>
+  </div>
+</section>
+
+<!-- what it does: six verbs, six pictograms -->
+<section class="does" id="does">
+  <div class="wrap">
+    <p class="eyebrow rv">What it does</p>
+    <h2 class="h2 words">From support to sales, classrooms to <em>entertainment.</em></h2>
+    <div class="verbs">
+      <div class="verb rv">
+        <svg class="picto draw" viewBox="0 0 100 100" aria-hidden="true">
+          <path class="k" pathLength="1" transform="translate(12 14) scale(3)" style="stroke-width:.75;--t:1000ms" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/>
+          <g class="ring"><path pathLength="1" style="--d:700ms" d="M60 24a18 18 0 0 1 16 16"/><path pathLength="1" style="--d:850ms" d="M60 11a31 31 0 0 1 29 29"/></g>
+        </svg>
+        <h3>Answer it.</h3><p>Let's get this sorted, right now.</p><span class="ind">Customer support</span>
+      </div>
+      <div class="verb rv" style="--i:1">
+        <svg class="picto draw" viewBox="0 0 100 100" aria-hidden="true">
+          <path class="k white" pathLength="1" style="--t:900ms" d="M16 44H76Q82 44 82 50V80Q82 86 76 86H16Q10 86 10 80V50Q10 44 16 44Z"/>
+          <path class="k" pathLength="1" style="--d:400ms" d="M10 57H82"/>
+          <path class="thick" pathLength="1" style="--d:600ms" d="M20 74H42"/>
+          <path pathLength="1" style="--d:800ms" d="M90 38C90 16 62 8 40 18"/>
+          <path pathLength="1" style="--d:1150ms;--t:300ms" d="M47 9L39 18L49 25"/>
+        </svg>
+        <h3>Refund it.</h3><p>Good news, your refund's gone through!</p><span class="ind">Customer care</span>
+      </div>
+      <div class="verb rv" style="--i:2">
+        <svg class="picto draw" viewBox="0 0 100 100" aria-hidden="true">
+          <path class="k" pathLength="1" style="--t:900ms" d="M18 22H82Q88 22 88 28V82Q88 88 82 88H18Q12 88 12 82V28Q12 22 18 22Z"/>
+          <path class="k" pathLength="1" style="--d:300ms" d="M12 38H88M32 14V28M68 14V28"/>
+          <path class="k" pathLength="1" style="--d:450ms;stroke-width:1.6" d="M19 48h10v11h-10zM33.5 48h10v11h-10zM48 48h10v11h-10zM77 48h10v11h-10zM19 67h10v11h-10zM33.5 67h10v11h-10zM48 67h10v11h-10zM62.5 67h10v11h-10zM77 67h10v11h-10z"/>
+          <path class="hot" pathLength="1" style="--d:600ms" d="M62.5 48h10v11h-10z"/>
+        </svg>
+        <h3>Book it.</h3><p>Done, I've moved you to Thursday at ten.</p><span class="ind">Appointments</span>
+      </div>
+      <div class="verb rv">
+        <svg class="picto draw" viewBox="0 0 100 100" aria-hidden="true">
+          <path class="k" pathLength="1" style="--t:900ms" d="M22 38H78L74 88H26Z"/>
+          <path class="k" pathLength="1" style="--d:350ms" d="M38 38V30a12 12 0 0 1 24 0V38"/>
+          <path class="thick" pathLength="1" style="--d:800ms" d="M38 63L47 72L64 53"/>
+        </svg>
+        <h3>Sell it.</h3><p>Ooh, good choice! That's back in your size.</p><span class="ind">Retail</span>
+      </div>
+      <div class="verb rv" style="--i:1">
+        <svg class="picto draw" viewBox="0 0 100 100" aria-hidden="true">
+          <path class="k" pathLength="1" style="--t:1000ms" d="M50 32C40 25 24 25 12 30V84C24 79 40 79 50 86C60 79 76 79 88 84V30C76 25 60 25 50 32Z"/>
+          <path class="k" pathLength="1" style="--d:400ms" d="M50 32V86"/>
+          <path class="k" pathLength="1" style="--d:600ms;stroke-width:1.6" d="M20 44H42M20 54H42M20 64H36"/>
+          <path pathLength="1" style="--d:850ms" d="M58 44H80M58 54H80M58 64H72"/>
+        </svg>
+        <h3>Teach it.</h3><p>Nice try! Let's break it down together.</p><span class="ind">Education</span>
+      </div>
+      <div class="verb rv" style="--i:2">
+        <svg class="picto draw" viewBox="0 0 100 100" aria-hidden="true">
+          <g class="wheel">
+            <path class="k" pathLength="1" style="--t:900ms" d="M28 50a22 22 0 1 0 44 0a22 22 0 1 0 -44 0"/>
+            <path class="k" pathLength="1" style="--d:400ms" d="M56 50L88 50M54.2 54.2L76.9 76.9M50 56L50 88M45.8 54.2L23.1 76.9M44 50L12 50M45.8 45.8L23.1 23.1M50 44L50 12M54.2 45.8L76.9 23.1"/>
+            <path class="k white" pathLength="1" style="--d:700ms" d="M87 50a4 4 0 1 0 8 0a4 4 0 1 0 -8 0M75.6 78.3a4 4 0 1 0 8 0a4 4 0 1 0 -8 0M46 92a4 4 0 1 0 8 0a4 4 0 1 0 -8 0M16.4 78.3a4 4 0 1 0 8 0a4 4 0 1 0 -8 0M5 50a4 4 0 1 0 8 0a4 4 0 1 0 -8 0M16.4 21.7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0M46 8a4 4 0 1 0 8 0a4 4 0 1 0 -8 0M75.6 21.7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/>
+            <circle class="hub" cx="50" cy="50" r="6"/>
+          </g>
+        </svg>
+        <h3>Play it.</h3><p>Arr, welcome aboard, matey!</p><span class="ind">Entertainment</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- languages: a real world map, four greetings, seventy-plus languages -->
+<section class="langs" id="languages">
+  <div class="wrap">
+    <p class="eyebrow rv">Languages</p>
+    <h2 class="h2 words">In your customers' accent. <em>In their language.</em></h2>
+    <div class="mapwrap" id="mapwrap">
+<!--WORLD-->
+      <div class="hello" data-pin="0" style="--pd:1.7s"><b>G'day</b><span>English · Australia</span></div>
+      <div class="hello" data-pin="1" style="--pd:2.15s"><b>¡Hola!</b><span>Español · México</span></div>
+      <div class="hello" data-pin="2" style="--pd:2.6s"><b dir="rtl" lang="ar">مرحبا</b><span>العربية</span></div>
+      <div class="hello" data-pin="3" style="--pd:3.05s"><b lang="ja">こんにちは</b><span>日本語 · Japan</span></div>
+    </div>
+    <div class="seventy rv"><span class="big"><span class="count" data-to="70">70</span><b>+</b></span><p>languages. <span>One agent.</span></p></div>
+  </div>
+</section>
+
+<!-- proof -->
+<section class="proof" id="proof">
+  <div class="wrap">
+    <p class="eyebrow rv">Proof</p>
+    <h2 class="h2 words">And it's already <em>working.</em></h2>
+    <div class="figs">
+      <div class="fig rv">
+        <div><p class="eyebrow mute where">Digital banking</p><div class="num"><span class="count" data-to="8">8</span><b>×</b></div><p class="what">faster resolution</p></div>
+        <div class="viz"><small>BEFORE</small><div class="track"></div><small class="b">AFTER</small><div class="fill" style="--to:12.5%"></div></div>
+      </div>
+      <div class="fig rv" style="--i:1">
+        <div><p class="eyebrow mute where">E-commerce</p><div class="num"><span class="count" data-to="30">30</span><b>%</b></div><p class="what">fewer abandoned carts</p></div>
+        <div class="viz"><small>ABANDONED CARTS</small><div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="go" style="--k:0"></i><i class="go" style="--k:1"></i><i class="go" style="--k:2"></i></div></div>
+      </div>
+      <div class="fig rv">
+        <div><p class="eyebrow mute where">Public sector</p><div class="num"><span class="count" data-to="50">50</span><b>%</b></div><p class="what">less workload</p></div>
+        <div class="viz"><small>WORKLOAD</small><div class="blocks"><i></i><i></i><i></i><i></i><i class="go" style="--k:0"></i><i class="go" style="--k:1"></i><i class="go" style="--k:2"></i><i class="go" style="--k:3"></i></div></div>
+      </div>
+      <div class="fig rv" style="--i:1">
+        <div><p class="eyebrow mute where">Agentic AI platform</p><div class="num"><span class="count" data-to="236">236</span><b>%</b></div><p class="what">three-year ROI · 2.1-month payback</p></div>
+        <div class="viz"><small>INVESTED</small><div class="fill" style="--from:0%;--to:29.8%;background:#c6c6c6"></div><small class="b">RETURNED</small><div class="fill" style="--from:0%;--to:100%"></div></div>
+      </div>
+    </div>
+    <p class="sources rv">Sources: published ElevenLabs customer outcomes; Futurum Research ROI study of IBM watsonx Orchestrate (2026). Results vary by deployment.</p>
+  </div>
+</section>
+
+<!-- watch it work -->
+<section class="work" id="work">
+  <div class="wrap">
+    <p class="eyebrow rv">Watch it work</p>
+    <h2 class="h2 words">It doesn't just talk. <em>It acts.</em></h2>
+    <div class="grid">
+      <div class="thread">
+        <div class="rv"><p class="who">Customer</p><p class="bubble them words">Hi, my order never turned up. Can I just get a refund?</p></div>
+        <div class="rv" style="--base:300ms"><p class="who blue">AI agent</p><p class="bubble us words">Oh no, sorry about that, Mark. I can see order 4821. I've refunded it, and texted you a confirmation.</p></div>
+      </div>
+      <div class="panel rv" id="actions">
+        <div class="head"><img src="assets/wxo.png" alt="">watsonx Orchestrate · live actions</div>
+        <div class="act" style="--k:0"><span class="st"><i class="ring0"></i><i class="spin"></i><i class="done"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></i></span>Verify caller</div>
+        <div class="act" style="--k:1"><span class="st"><i class="ring0"></i><i class="spin"></i><i class="done"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></i></span>Find order #4821</div>
+        <div class="act" style="--k:2"><span class="st"><i class="ring0"></i><i class="spin"></i><i class="done"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></i></span>Issue refund · £48.00</div>
+        <div class="act" style="--k:3"><span class="st"><i class="ring0"></i><i class="spin"></i><i class="done"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></i></span>Text confirmation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- the sign-off -->
+<section class="final">
+  <div class="wrap">
+    <p class="eyebrow rv">AI agent</p>
+    <p class="quote words">Is there anything else I can help you with today?</p>
+    <div class="row">
+      <p class="rv">Give your agents a voice your customers will actually want to talk to.</p>
+      <a class="btn xl rv" href="{{CTA}}">Get in touch <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand"><span class="ibm" aria-hidden="true"></span><span class="sep" aria-hidden="true"></span><span>watsonx Orchestrate</span></span>
+    <span class="partners">In partnership with <img src="assets/elevenlabs-black.png" alt="ElevenLabs"></span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // split headings (and bubbles) into words that arrive one at a time
+  document.querySelectorAll('.words').forEach((el) => {
+    let i = 0;
+    const walk = (node) => [...node.childNodes].forEach((c) => {
+      if (c.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        c.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) return frag.appendChild(document.createTextNode(part));
+          const s = document.createElement('span'); s.className = 'w'; s.style.setProperty('--i', i++); s.textContent = part; frag.appendChild(s);
+        });
+        c.replaceWith(frag);
+      } else if (c.nodeType === 1) walk(c);
+    });
+    walk(el);
+  });
+
+  // count-ups when a number arrives
+  const countUp = (el) => {
+    const to = +el.dataset.to; const t0 = performance.now(); const dur = 1100;
+    const step = (t) => { const p = Math.min(1, (t - t0) / dur); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
+    el.textContent = '0'; requestAnimationFrame(step);
+  };
+
+  // one observer: .in when things arrive
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    const t = e.target; t.classList.add('in');
+    if (t.id === 'mapwrap') t.querySelector('.world').classList.add('in');
+    t.querySelectorAll?.('.count').forEach(countUp);
+    io.unobserve(t);
+  }), { threshold: 0.2, rootMargin: '0px 0px -6% 0px' });
+  document.querySelectorAll('.rv, .words, .draw, .ground, #mapwrap, .verb, .fig, .seventy, #actions').forEach((t) => io.observe(t));
+
+  // on phones, frame the drawing on the call, the voice and the agent so it can be larger
+  const art = document.querySelector('.hero-art');
+  const frameArt = () => art && art.setAttribute('viewBox', innerWidth < 640 ? '14 -16 424 244' : '0 -14 600 243');
+  frameArt(); addEventListener('resize', frameArt);
+
+  // the hero performs immediately
+  requestAnimationFrame(() => document.querySelectorAll('#top .rv, #top .words, #top .draw, #top .ground').forEach((el) => el.classList.add('in')));
+
+  // greetings sit on their pins at any width
+  const placeHellos = () => {
+    const svg = document.querySelector('.world'); const box = document.getElementById('mapwrap');
+    if (!svg || !box) return;
+    const vb = svg.viewBox.baseVal; const r = svg.getBoundingClientRect(); const b = box.getBoundingClientRect(); const k = r.width / vb.width;
+    document.querySelectorAll('.hello').forEach((h) => {
+      const dot = svg.querySelector(`.dot[data-pin="${h.dataset.pin}"]`); if (!dot) return;
+      h.style.left = (r.left - b.left + +dot.getAttribute('cx') * k) + 'px';
+      h.style.top = (r.top - b.top + +dot.getAttribute('cy') * k) + 'px';
+    });
+  };
+  addEventListener('resize', placeHellos); addEventListener('load', placeHellos); placeHellos();
+
+  // scroll: progress, header rule, the strike through "on hold."
+  const bar = document.querySelector('.progress'), head = document.querySelector('.bar'), strike = document.getElementById('strike');
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+    head.classList.toggle('lined', scrollY > 10);
+    const r = strike.getBoundingClientRect();
+    strike.style.setProperty('--p', Math.min(1, Math.max(0, (innerHeight * 0.85 - r.top) / (innerHeight * 0.35))).toFixed(3));
+  };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // the film plays with sound on the first click
+  const v = document.getElementById('video'), p = document.getElementById('player');
+  document.getElementById('play').addEventListener('click', () => { p.classList.add('playing'); v.controls = true; v.play(); });
+  v.addEventListener('ended', () => { p.classList.remove('playing'); v.controls = false; v.load(); });
+})();
+</script>
+</body>
+</html>
