@@ -1,16 +1,15 @@
-// Builds index.html from tools/template.html: inlines the hero drawing (tools/drawing.mjs), the world map with its
+// Builds index.html from tools/template.html: inlines the world map with its
 // greeting pins (tools/world.json, from geo-outline.mjs) and the "Get in touch" link (tools/config.json → cta).
 // Run: node tools/build.mjs
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..");
 const config = existsSync(join(here, "config.json")) ? JSON.parse(readFileSync(join(here, "config.json"), "utf8")) : {};
 const cta = config.cta || "#top";
 
-const hero = (await import(pathToFileURL(join(here, "drawing.mjs")).href)).default();
 
 // the world sweeps in from west to east; each greeting's pin drops in turn
 const w = JSON.parse(readFileSync(join(here, "world.json"), "utf8"));
@@ -25,6 +24,6 @@ const world = [
   `</svg>`,
 ].join("\n");
 
-const html = readFileSync(join(here, "template.html"), "utf8").replace("<!--HERO-->", hero).replace("<!--WORLD-->", world).replaceAll("{{CTA}}", cta);
+const html = readFileSync(join(here, "template.html"), "utf8").replace("<!--WORLD-->", world).replaceAll("{{CTA}}", cta);
 writeFileSync(join(root, "index.html"), html);
 console.log(`index.html written (${Math.round(html.length / 1024)} KB) · Get in touch → ${cta}`);

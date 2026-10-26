@@ -72,19 +72,16 @@ section{position:relative}
 .drawing .f{fill:rgba(15,98,254,0);transition:fill 1.2s ease calc(var(--base,0ms) + 3000ms),stroke-dashoffset var(--t) var(--ease2) calc(var(--d) + var(--base,0ms))}
 .drawing.in .f{fill:rgba(15,98,254,.06)}
 .drawing .white{fill:#fff}
-.hero-art text{font-family:var(--font);font-size:8px;font-weight:500;letter-spacing:.14em}
-.hero-art .t-ink{fill:var(--ink);font-weight:400;letter-spacing:0}
-.hero-art .t-mute{fill:var(--mute)}
-.hero-art .lbl{opacity:0;transition:opacity .7s ease calc(var(--d,0ms) + var(--base,0ms))}
-.hero-art.in .lbl{opacity:1}
-.hero-art .dotfill{fill:var(--blue)}
-.hero-art .core{fill:var(--blue);transform-box:fill-box;transform-origin:center;transform:scale(0);transition:transform .6s var(--ease) calc(var(--d,0ms) + var(--base,0ms))}
-.hero-art.in .core{transform:none}
-.hero-art .ripple{fill:none;stroke:var(--blue);stroke-width:1.2;transform-box:fill-box;transform-origin:center;opacity:0}
-.hero-art.in .ripple{animation:ripple 2s ease-out 3.6s infinite}
-.hero-art .flow{fill:var(--blue);opacity:0;transition:opacity .6s ease 4s}
-.hero-art.in .flow{opacity:1}
-@keyframes ripple{0%{transform:scale(1);opacity:.8}100%{transform:scale(4.2);opacity:0}}
+/* the voicemark: a voice wave that settles into the IBM stripes */
+.voicemark{position:relative;width:100%;aspect-ratio:1000/374;margin-bottom:34px}
+.vm-wave{position:absolute;inset:0;width:100%;height:100%;overflow:visible;clip-path:inset(-60% -2% -60% calc(var(--carve,0)*100%))}
+.vm-wave path{fill:none;stroke:var(--blue);stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:1 1;stroke-dashoffset:1;transition:stroke-dashoffset 1.3s var(--ease2) .55s}
+.voicemark.in .vm-wave path{stroke-dashoffset:0}
+.vm-logo{position:absolute;inset:0;clip-path:inset(-10% calc((1 - var(--carve,0))*100%) -10% 0)}
+.vm-band{position:absolute;inset:0;background:var(--blue);-webkit-mask:url(assets/ibm.png) 0 0/100% 100% no-repeat;mask:url(assets/ibm.png) 0 0/100% 100% no-repeat}
+.voicemark.formed .vm-wave{visibility:hidden}
+.voicemark.formed .vm-band{animation:stripe-pass 7s var(--ease2) 1.2s infinite;animation-delay:calc(1.2s + var(--k)*70ms)}
+@keyframes stripe-pass{0%,72%,100%{transform:translateX(0)}82%{transform:translateX(2.2%)}}
 .ground{height:2px;background:rgba(15,98,254,.55);transform-origin:left;transform:scaleX(0);transition:transform 1.4s var(--ease2) .35s}
 .ground.in{transform:none}
 .hero .foot{display:flex;justify-content:space-between;align-items:center;padding:22px 0 30px;font-size:15px;color:var(--mute);font-weight:400}
@@ -289,12 +286,15 @@ footer .partners img{height:14px}
         <a class="btn ghost" href="#film">Watch the film</a>
       </div>
     </div>
-    <div class="art" style="--base:600ms">
-<!--HERO-->
+    <div class="art">
+      <div class="voicemark" id="voicemark" role="img" aria-label="A voice waveform that settles into the IBM logo">
+        <svg class="vm-wave" viewBox="0 0 1000 374" aria-hidden="true"><path pathLength="1"/><path pathLength="1"/><path pathLength="1"/><path pathLength="1"/><path pathLength="1"/><path pathLength="1"/><path pathLength="1"/><path pathLength="1"/></svg>
+        <div class="vm-logo" aria-hidden="true"><i class="vm-band" style="--k:0;clip-path:inset(0.000% 0 89.841% 0)"></i><i class="vm-band" style="--k:1;clip-path:inset(10.159% 0 76.508% 0)"></i><i class="vm-band" style="--k:2;clip-path:inset(23.492% 0 63.175% 0)"></i><i class="vm-band" style="--k:3;clip-path:inset(36.825% 0 50.159% 0)"></i><i class="vm-band" style="--k:4;clip-path:inset(49.841% 0 36.825% 0)"></i><i class="vm-band" style="--k:5;clip-path:inset(63.175% 0 23.492% 0)"></i><i class="vm-band" style="--k:6;clip-path:inset(76.508% 0 10.159% 0)"></i><i class="vm-band" style="--k:7;clip-path:inset(89.841% 0 0.000% 0)"></i></div>
+      </div>
     </div>
   </div>
   <div class="wrap"><div class="ground"></div></div>
-  <div class="wrap foot rv" style="--base:1400ms"><span>Answered. Resolved. Confirmed.</span><a class="scrollcue" href="#film">Scroll <i aria-hidden="true"></i></a></div>
+  <div class="wrap foot rv" style="--base:1400ms"><span>Voice by ElevenLabs · Agents by IBM watsonx Orchestrate</span><a class="scrollcue" href="#film">Scroll <i aria-hidden="true"></i></a></div>
 </section>
 
 <!-- the film -->
@@ -529,10 +529,47 @@ footer .partners img{height:14px}
   }), { threshold: 0.2, rootMargin: '0px 0px -6% 0px' });
   document.querySelectorAll('.rv, .words, .draw, .ground, #mapwrap, .verb, .fig, .seventy, #actions').forEach((t) => io.observe(t));
 
-  // on phones, frame the drawing on the call, the voice and the agent so it can be larger
-  const art = document.querySelector('.hero-art');
-  const frameArt = () => art && art.setAttribute('viewBox', innerWidth < 640 ? '14 -16 424 244' : '0 -14 600 243');
-  frameArt(); addEventListener('resize', frameArt);
+  // the voicemark: speak, settle into eight lines, thicken into the stripes, carve the letters
+  const vm = document.getElementById('voicemark');
+  if (vm) {
+    const paths = [...vm.querySelectorAll('.vm-wave path')];
+    const K = 1000 / 843;
+    const ROW = [0, 42, 84, 126, 167, 209, 251, 293].map((y) => (y + 11) * K);
+    const TH = 22 * K;
+    const N = 150;
+    const clamp01 = (x) => Math.max(0, Math.min(1, x));
+    const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+    const draw = (t) => {
+      const split = ease(clamp01((t - 3.7) / 1.3));
+      const amp = 1 - ease(clamp01((t - 3.4) / 1.1));
+      const loud = 0.6 + 0.4 * Math.sin(t * 2.3) * Math.sin(t * 0.85 + 1.2);
+      paths.forEach((p, k) => {
+        let d = '';
+        for (let i = 0; i <= N; i++) {
+          const u = i / N;
+          const env = Math.pow(Math.sin(Math.PI * u), 2);
+          const w = (Math.sin(u * Math.PI * 2 * 3 + t * 4.6 + k * 0.5) + 0.45 * Math.sin(u * Math.PI * 2 * 5.2 - t * 3.3 + k * 0.8)) * 96 * (1 - k * 0.07) * env * amp * loud;
+          d += (i ? 'L' : 'M') + (u * 1000).toFixed(1) + ' ' + (187 + w * (1 - split) + (ROW[k] - 187) * split).toFixed(1);
+        }
+        p.setAttribute('d', d);
+        p.style.strokeWidth = (2.2 + (TH - 2.2) * split * split).toFixed(2);
+        p.style.strokeOpacity = (0.5 + 0.5 * split).toFixed(2);
+      });
+      const carve = ease(clamp01((t - 5.1) / 0.75));
+      vm.style.setProperty('--carve', carve.toFixed(3));
+      return carve >= 1;
+    };
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { draw(99); vm.classList.add('in', 'formed'); }
+    else {
+      draw(0);
+      let t0 = null;
+      const tick = (now) => {
+        if (t0 === null) t0 = now;
+        if (draw((now - t0) / 1000 - 0.55)) vm.classList.add('formed'); else requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(() => { vm.classList.add('in'); requestAnimationFrame(tick); });
+    }
+  }
 
   // the hero performs immediately
   requestAnimationFrame(() => document.querySelectorAll('#top .rv, #top .words, #top .draw, #top .ground').forEach((el) => el.classList.add('in')));

@@ -1,7 +1,7 @@
 // Full-page screenshots via the DevTools protocol: node tools/shoot.mjs <url> <out.png> <width> <height> [scrollSteps]
 import { spawn } from "node:child_process";
 import { writeFileSync } from "node:fs";
-const [url, out, W = "1440", H = "900", mode = "full"] = process.argv.slice(2); // mode "viewport" captures only the first screen (og images)
+const [url, out, W = "1440", H = "900", mode = "full", waitMs = "5000"] = process.argv.slice(2); // mode "viewport" captures only the first screen (og images) after waitMs
 const HS = process.env.HS || `${process.env.HOME}/Library/Caches/remotion-hs/chrome-headless-shell-mac-arm64/chrome-headless-shell`; // or any Chrome / headless shell binary
 const chrome = spawn(HS, ["--headless", "--disable-gpu", "--hide-scrollbars", "--remote-debugging-port=9333", "--autoplay-policy=no-user-gesture-required", "about:blank"], { stdio: "ignore" });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -21,7 +21,7 @@ await sleep(2500);
 let total = +H;
 if (mode === "viewport") {
   // the first screen only (og images): no scrolling, just let the hero finish drawing
-  await sleep(5000);
+  await sleep(+waitMs);
 } else {
   // scroll through the page so every reveal fires, then back to the top
   ({ result: { value: total } } = await send("Runtime.evaluate", { expression: "document.documentElement.scrollHeight", returnByValue: true }));
